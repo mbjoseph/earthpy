@@ -10,7 +10,7 @@ python:
 cache: pip
 
 before_install:
-  - sudo apt-add-repository ppa:ubuntugis/ubuntugis-unstable
+  - sudo apt-add-repository ppa:ubuntugis/ubuntugis-unstable --yes
   - sudo apt-get update
   - sudo apt-get install -y libspatialindex-dev libgdal-dev python3-tk
 
