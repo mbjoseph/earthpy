@@ -7,6 +7,12 @@ python:
 - "3.6"
 - "3.7"
 
+
+matrix:
+  include:
+    - os: osx
+      language: generic
+
 before_install:
   - sudo apt-add-repository ppa:ubuntugis/ubuntugis-unstable --yes
   - sudo apt-get update
