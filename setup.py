@@ -27,7 +27,6 @@ if __name__ == "__main__":
         version=VERSION,
         packages=["earthpy"],
         install_requires=[
-            "tqdm",
             "pandas",
             "numpy>=1.14.0",
             "geopandas",
