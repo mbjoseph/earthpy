@@ -24,10 +24,10 @@ If you are proposing a feature:
 Get Started!
 ============
 
-Ready to contribute? Here's how to set up `earthpy` for local development.
+Ready to contribute? Here's how to set up EarthPy for local development.
 
-1. Fork the earthpy repo on GitHub
-----------------------------------
+1. Fork the repository on GitHub
+--------------------------------
 
 To create your own copy of the repository on GitHub, navigate to the
 `earthlab/earthpy <https://github.com/earthlab/earthpy>`_ repository
@@ -36,7 +36,7 @@ and click the **Fork** button in the top-right corner of the page.
 2. Clone your fork locally
 --------------------------
 
-Use ``git clone`` to get a local copy of your earthpy repository on your
+Use ``git clone`` to get a local copy of your EarthPy repository on your
 local filesystem::
 
     $ git clone git@github.com:your_name_here/earthpy.git
@@ -61,8 +61,8 @@ Or, using virtualenv::
 Install the package
 ^^^^^^^^^^^^^^^^^^^
 
-Once the earthpy-dev environment is activated, install earthpy in editable
-mode, along with the development dependencies and the pre-commit hooks::
+Once the environment is activated, install EarthPy in editable
+mode, along with the development requirements and pre-commit hooks::
 
     $ pip install -e .
     $ pip install -r dev-requirements.txt
@@ -81,7 +81,7 @@ Now you can make your changes locally.
 5. Test the package
 -------------------
 
-Ensure tests pass, docs build, and examples run::
+Ensure that the tests pass, and the documentation builds successfully::
 
     $ pytest
     $ make docs
@@ -157,7 +157,7 @@ You can preview the generated documentation by opening
 
 Earthpy uses `doctest
 <https://www.sphinx-doc.org/en/master/usage/extensions/doctest.html>`_ to test
-code in the documentation, which includes docstrings in earthpy's modules, and
+code in the documentation, which includes docstrings in EarthPy's modules, and
 code chunks in the reStructuredText source files.
 This enables the actual output of code examples to be checked against expected
 output.
@@ -229,7 +229,7 @@ package, and generates a git commit along with an associated git tag for the
 new version.
 For more on bumpversion, see: https://github.com/peritus/bumpversion
 
-To deploy earthpy, push the commit and the version tags::
+To deploy EarthPy, push the commit and the version tags::
 
     $ git push
     $ git push --tags
