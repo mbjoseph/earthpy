@@ -27,9 +27,9 @@ install:
   - conda config --add channels conda-forge
   - conda info -a
   - conda env create -f environment.yml
+  - activate earthpy-dev
   - pip install -r dev-requirements.txt
 
 test_script:
-  - activate earthpy-dev
   - conda list
   - pytest
