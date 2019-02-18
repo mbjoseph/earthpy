@@ -32,4 +32,4 @@ install:
 test_script:
   - activate earthpy-dev
   - conda list
-  - pytest
+  - pytest --doctest-modules
