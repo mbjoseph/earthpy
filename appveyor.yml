@@ -6,7 +6,7 @@ matrix:
 environment:
   matrix:
     - PYTHON_VERSION: "3.6"
-      MINICONDA: C:\Miniconda37-x64
+      MINICONDA: C:\Miniconda36-x64
 
 build: false
 
@@ -32,4 +32,4 @@ install:
 test_script:
   - activate earthpy-dev
   - conda list
-  - python -m pytest --doctest-modules
+  - pytest
