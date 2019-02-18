@@ -1,0 +1,24 @@
+name: earthpy-dev
+channels:
+  - conda-forge
+dependencies:
+  # Core scientific python
+  - numpy
+  - matplotlib
+  - python=3.6
+
+  # Geo stuff
+  - geopy
+  - cartopy
+  - geopandas
+  - rasterio
+  - pysal
+  - pyproj
+  - scikit-image
+  - gdal
+  - geocoder
+
+  - pip:
+      # Utilities
+      - download
+      - mne
