@@ -86,107 +86,105 @@ pixel_flags = {
 }
 
 
-def _create_mask(mask_arr, vals):
+def make_cloud_mask(mask_arr, vals):
     """Take an input single band mask layer such as a pixel_qa
-    layer for MODIS or Landsat and apply a mask given a range of values to mask.
+    layer for MODIS or Landsat and apply a mask given a range of vals to mask
 
     Parameters
     -----------
     mask_arr : numpy array
-        An array of the pixel_qa or mask raster of interest.
+        An array... to open the pixel_qa or mask raster of interest
 
     vals : list of numbers (int or float)
-        A list of values from mask_arr (the qa layer) used to create
-        the mask for the final return array.
+        A list of values that represent no data in the provided raster
+        layer (mask_arr)
 
     Returns
     -----------
     arr : numpy array
-        A numpy array populated with 1's where the mask is applied (a Boolean True)
-        and a 0 where no masking will be done.
+        A numpy array with values that should be masked set to 1 for
+        True (Boolean)
     """
 
+    # Make sure vals is a list
     try:
         vals.sort()
     except AttributeError:
         raise AttributeError("Values should be provided as a list")
 
-    unique_vals = np.unique(mask_arr).tolist()
-
-    if any(num in vals for num in unique_vals):
+    try:
+        mask_arr.ndim
         temp_mask = np.isin(mask_arr, vals)
-        mask_arr[temp_mask] = 1
-        mask_arr[~temp_mask] = 0
+    except AttributeError:
+        raise AttributeError("Input arr should be a numpy array")
 
-        return mask_arr
+    # Mask the values
+    mask_arr[temp_mask] = 1
+    mask_arr[~temp_mask] = 0
 
-    else:
-        raise ValueError(
-            """The values provided for the mask do not occur
-            in your mask array."""
-        )
+    return mask_arr
 
 
-def _apply_mask(arr, input_mask):
-    """Applies a single dimension mask to the provided array.
+def apply_cloud_mask(arr, the_mask):
+    """Take an input raster numpy array in band order (bands, rows,cols)
+     and apply a mask to the array
 
     Parameters
     -----------
     arr : numpy array
-        The original numpy array in rasterio (band, row, col) order
-        that needs a mask applied.
+        An array in rasterio (band, row, col) order
 
-    input_mask : numpy array
-        A numpy array containing O's and 1's where the 1's indicate where the
-        mask is applied.
+    the_mask : single dimension (band) numpy array
+        A numpy array containing a qa values for raster pixels that should be
+        masked - ex landsat pixel_qa layer.
 
     Returns
     -----------
-    numpy array
-        The original numpy array with the mask applied to cover up issue pixels.
+    masked arr : a masked numpy array
+        A masked numpy array with the mask having the same dimensions as arr
     """
 
-    # Test if input_mask is numpy array w values == 1 for masked
-    if not np.any(input_mask == 1):
+    # Test if the_mask is numpy array w values == 1 for masked
+    if not np.any(the_mask == 1):
         raise ValueError("Mask requires values of 1 (True) to be applied.")
 
-    cover_mask = np.broadcast_to(input_mask == 1, arr.shape)
+    try:
+        # Create a mask for all bands in the landsat scene
+        cl_mask = np.broadcast_to(the_mask == 1, arr.shape)
+    except AttributeError:
+        raise AttributeError("Input arr should be a numpy array")
 
     # If the user provides a masked array, combine masks
     if isinstance(arr, np.ma.MaskedArray):
-        cover_mask = np.logical_or(arr.mask, cover_mask)
+        cl_mask = np.logical_or(arr.mask, cl_mask)
 
     # Return combined mask
-    return ma.masked_array(arr, mask=cover_mask)
+    return ma.masked_array(arr, mask=cl_mask)
 
 
-def mask_pixels(arr, mask_arr, vals=None):
+def make_apply_mask(arr, mask_arr, vals):
     """Take an input array to be masked, single band mask layer such as a
-    pixel_qa layer for MODIS or Landsat, and apply a mask given a range of
-    values to mask. This function can also be passed a previously created
-    mask in place of a qa layer and a list of values.
+    pixel_qa layer for MODIS or Landsat and apply a mask given a range of
+    vals to mask.
 
     Parameters
     -----------
     arr : numpy array
-        The array to mask in rasterio (band, row, col) order.
+        An array in rasterio (band, row, col) order
     mask_arr : numpy array
-        An array of either the pixel_qa or mask of interest.
-    vals : list of numbers either int or float (optional)
-        A list of values from the pixel qa layer that will be used to create
-        the mask for the final return array. If vals are not passed in,
-        it is assumed the mask_arr given is the mask of interest.
+        An array to open the pixel_qa or mask raster of interest
+    vals : list of numbers (int or float)
+        A list of values that represent no data in mask_arr
 
     Returns
     -------
     arr : numpy array
-        A numpy array populated with 1's where the mask is applied (a Boolean True)
-        and the original numpy array's value where no masking was done.
+        A numpy array with values that should be masked set to 1 for True
 
     Example
     -------
     >>> import numpy as np
-    >>> from earthpy.mask import mask_pixels
+    >>> from earthpy.mask import make_apply_mask
     >>> im = np.arange(9).reshape((3, 3))
     >>> im
     array([[0, 1, 2],
@@ -197,7 +195,7 @@ def mask_pixels(arr, mask_arr, vals=None):
     array([[1, 1, 1],
            [0, 0, 0],
            [1, 1, 1]])
-    >>> mask_pixels(im, mask_arr=im_mask, vals=[1])
+    >>> make_apply_mask(im, mask_arr=im_mask, vals=[1])
     masked_array(
       data=[[--, --, --],
             [3, 4, 5],
@@ -207,27 +205,5 @@ def mask_pixels(arr, mask_arr, vals=None):
             [ True,  True,  True]],
       fill_value=999999)
     """
-
-    try:
-        arr.ndim
-    except AttributeError:
-        raise AttributeError("Input arr should be a numpy array.")
-
-    try:
-        mask_arr.ndim
-    except AttributeError:
-        raise AttributeError("Input arr should be a numpy array.")
-
-    if vals:
-        cover_mask = _create_mask(mask_arr, vals)
-    else:
-        # Check to make sure the mask_arr is a boolean
-        if np.array_equal(mask_arr, mask_arr.astype(bool)):
-            cover_mask = mask_arr.astype(bool)
-        else:
-            raise ValueError(
-                """You have provided a mask_array with no values to mask. Please
-                either provide a mask_array of type bool, or provide values
-                to be used to create a mask."""
-            )
-    return _apply_mask(arr, cover_mask)
+    cl_mask = make_cloud_mask(mask_arr, vals)
+    return apply_cloud_mask(arr, cl_mask)

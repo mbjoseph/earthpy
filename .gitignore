@@ -21,8 +21,6 @@ parts/
 sdist/
 var/
 wheels/
-pip-wheel-metadata/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -109,7 +107,6 @@ ENV/
 # Testing files
 earthpy/deprecated.py
 earthpy/testing.py
-earthpy/ignored_script.py
 
 # OS stuff
 .DS_Store
